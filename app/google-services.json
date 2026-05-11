@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "768799169989",
+    "project_id": "savewise-f62a5",
+    "storage_bucket": "savewise-f62a5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768799169989:android:f4c68f276a602d7ea4bfac",
+        "android_client_info": {
+          "package_name": "com.kim.savewise"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3pHvENYKMA31Vcrk5_-X_2q0pjJb9Nq4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
