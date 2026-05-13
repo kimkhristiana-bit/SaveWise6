@@ -28,7 +28,10 @@ import java.util.Locale
 fun SavingsHubScreen(
     onNavigateToDashboard: () -> Unit = {},
     onNavigateToRewards: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {}
+    onNavigateToProfile: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
+    onSearchClick: () -> Unit = {},
+    onAddClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -44,19 +47,20 @@ fun SavingsHubScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = onMenuClick) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Primary)
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = onSearchClick) {
                         Icon(Icons.Default.Search, contentDescription = "Search", tint = OnSurfaceVariant)
                     }
                     Surface(
                         modifier = Modifier
                             .padding(end = 16.dp)
                             .size(40.dp)
-                            .border(2.dp, Primary.copy(alpha = 0.2f), CircleShape),
+                            .border(2.dp, Primary.copy(alpha = 0.2f), CircleShape)
+                            .clickable { onNavigateToProfile() },
                         shape = CircleShape
                     ) {
                         // Placeholder for User Profile Image
@@ -106,7 +110,7 @@ fun SavingsHubScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { },
+                onClick = onAddClick,
                 containerColor = Primary,
                 contentColor = Color.White,
                 shape = CircleShape,
@@ -147,7 +151,7 @@ fun SavingsHubScreen(
                 JointGroupCard()
             }
             item {
-                NewAccountPlaceholder()
+                NewAccountPlaceholder(onClick = onAddClick)
             }
         }
     }
@@ -345,6 +349,7 @@ fun PortfolioHealthCard(modifier: Modifier = Modifier) {
 
 @Composable
 fun AutoSaveCard(modifier: Modifier = Modifier) {
+    var isActive by remember { mutableStateOf(true) }
     Card(
         modifier = modifier.height(200.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -371,8 +376,8 @@ fun AutoSaveCard(modifier: Modifier = Modifier) {
             }
             
             Switch(
-                checked = true,
-                onCheckedChange = { },
+                checked = isActive,
+                onCheckedChange = { isActive = it },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color.White,
                     checkedTrackColor = Primary,
@@ -563,9 +568,9 @@ fun JointGroupCard() {
 }
 
 @Composable
-fun NewAccountPlaceholder() {
+fun NewAccountPlaceholder(onClick: () -> Unit = {}) {
     Surface(
-        onClick = { },
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         color = Color.White,

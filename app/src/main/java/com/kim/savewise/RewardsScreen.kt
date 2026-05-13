@@ -28,7 +28,11 @@ import com.kim.savewise.ui.theme.*
 fun RewardsScreen(
     onNavigateToDashboard: () -> Unit = {},
     onNavigateToSavings: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {}
+    onNavigateToProfile: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
+    onViewHallOfFameClick: () -> Unit = {},
+    onRedeemReward: (String) -> Unit = {},
+    onBadgeClick: (String) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -44,7 +48,7 @@ fun RewardsScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = onMenuClick) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Primary)
                     }
                 },
@@ -53,7 +57,8 @@ fun RewardsScreen(
                         modifier = Modifier
                             .padding(end = 16.dp)
                             .size(40.dp)
-                            .border(1.dp, Primary, CircleShape),
+                            .border(1.dp, Primary, CircleShape)
+                            .clickable { onNavigateToProfile() },
                         shape = CircleShape
                     ) {
                         // Placeholder for avatar
@@ -118,10 +123,10 @@ fun RewardsScreen(
                 MilestoneBonusesSection()
             }
             item {
-                UnlockedBadgesSection()
+                UnlockedBadgesSection(onViewHallOfFameClick = onViewHallOfFameClick, onBadgeClick = onBadgeClick)
             }
             item {
-                RewardsShopSection()
+                RewardsShopSection(onRedeemReward = onRedeemReward)
             }
         }
     }
@@ -254,7 +259,7 @@ fun MilestoneCard(title: String, desc: String, points: String, progress: Float, 
 }
 
 @Composable
-fun UnlockedBadgesSection() {
+fun UnlockedBadgesSection(onViewHallOfFameClick: () -> Unit, onBadgeClick: (String) -> Unit) {
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
             Text(
@@ -263,27 +268,28 @@ fun UnlockedBadgesSection() {
             )
             Text(
                 "VIEW HALL OF FAME",
+                modifier = Modifier.clickable { onViewHallOfFameClick() },
                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold, color = Primary, letterSpacing = 2.sp)
             )
         }
         Spacer(modifier = Modifier.height(24.dp))
         Row(modifier = Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            BadgeItem(icon = Icons.Default.Savings, label = "Penny Pincher", color = Primary)
-            BadgeItem(icon = Icons.Default.Bolt, label = "Instant Saver", color = Tertiary)
-            BadgeItem(icon = Icons.Default.Monitoring, label = "Growth Guru", color = Primary)
-            BadgeItem(icon = Icons.Default.Group, label = "Community Hero", color = Secondary)
-            BadgeItem(icon = Icons.Default.ShieldWithHeart, label = "Safe Guard", color = Primary)
-            BadgeItem(icon = Icons.Default.Lock, label = "???", color = Outline, isLocked = true)
+            BadgeItem(icon = Icons.Default.Savings, label = "Penny Pincher", color = Primary, onClick = { onBadgeClick("Penny Pincher") })
+            BadgeItem(icon = Icons.Default.Bolt, label = "Instant Saver", color = Tertiary, onClick = { onBadgeClick("Instant Saver") })
+            BadgeItem(icon = Icons.Default.Insights, label = "Growth Guru", color = Primary, onClick = { onBadgeClick("Growth Guru") })
+            BadgeItem(icon = Icons.Default.Group, label = "Community Hero", color = Secondary, onClick = { onBadgeClick("Community Hero") })
+            BadgeItem(icon = Icons.Default.Security, label = "Safe Guard", color = Primary, onClick = { onBadgeClick("Safe Guard") })
+            BadgeItem(icon = Icons.Default.Lock, label = "???", color = Outline, isLocked = true, onClick = { onBadgeClick("Unknown Badge") })
         }
     }
 }
 
 @Composable
-fun BadgeItem(icon: ImageVector, label: String, color: Color, isLocked: Boolean = false) {
+fun BadgeItem(icon: ImageVector, label: String, color: Color, isLocked: Boolean = false, onClick: () -> Unit = {}) {
     Surface(
-        modifier = Modifier.width(100.dp),
+        modifier = Modifier.width(100.dp).clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        color = if (isLocked) SurfaceDim else SurfaceContainerLow,
+        color = if (isLocked) SurfaceVariant else SurfaceContainerLow,
         border = BorderStroke(1.dp, if (isLocked) OutlineVariant.copy(alpha = 0.3f) else OutlineVariant)
     ) {
         Column(
@@ -312,27 +318,29 @@ fun BadgeItem(icon: ImageVector, label: String, color: Color, isLocked: Boolean 
 }
 
 @Composable
-fun RewardsShopSection() {
+fun RewardsShopSection(onRedeemReward: (String) -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         RewardShopCard(
             type = "Premium Reward",
             title = "Exclusive Metal Card",
             desc = "Unlock the weighted titanium edition with free worldwide concierge services.",
             points = "Redeem 50k PTS",
-            imageRes = "https://lh3.googleusercontent.com/aida-public/AB6AXuBaIskRxj1QZEsoYLc5Juus8HiNVs_tv8sigiVfuNNs8A9o8B0eCb0XBs-aXvyfLrTpy6YpKXzEV3vMtTGUgtlhy5HCnK4Pi6oM9rGxtdxbrRqAhl2X_MjgEW9_M9UTMCE_GS9gt9NkyftKr-2ewvnpLm4xLcrEXfNMG3vhjxdxtqCGi6YMLQfaUqtHu2gDHbEDpEa9ybRQomk5FZPhw5vosONx0wZdp6C_KWye_yjJyDY0CkVONFwgyhaoc-N5j_-dBJRXDlHx-lP4"
+            imageRes = "https://lh3.googleusercontent.com/aida-public/AB6AXuBaIskRxj1QZEsoYLc5Juus8HiNVs_tv8sigiVfuNNs8A9o8B0eCb0XBs-aXvyfLrTpy6YpKXzEV3vMtTGUgtlhy5HCnK4Pi6oM9rGxtdxbrRqAhl2X_MjgEW9_M9UTMCE_GS9gt9NkyftKr-2ewvnpLm4xLcrEXfNMG3vhjxdxtqCGi6YMLQfaUqtHu2gDHbEDpEa9ybRQomk5FZPhw5vosONx0wZdp6C_KWye_yjJyDY0CkVONFwgyhaoc-N5j_-dBJRXDlHx-lP4",
+            onRedeem = { onRedeemReward("Exclusive Metal Card") }
         )
         RewardShopCard(
             type = "Boost Perk",
             title = "+2% APY Boost",
             desc = "Increase your savings yield by 2% for the next 90 days. limited time offer.",
             points = "Redeem 10k PTS",
-            imageRes = "https://lh3.googleusercontent.com/aida-public/AB6AXuDembsTXOEH5WaLBGGXH523jVAddzEbCq4h62XNxMR0wccFqD-_s1BtTqARD2gPGJPO4mcClK9wnWC8NOPOLFqPFx7FXwK0zVREpa-YIvwJBsYWar2OKxMKOdY-04fNhRqYwH5LJvv4rKdZ97itHouRjig6z2HXnUSzGnSyzmISvlGW8MoMbVhDxvLCIMf-DtBuhknryCcvkb7gmm8nfJ0C411ZLnV1gPcXza5FGeDlY7qhZ7MHqo1Kc1fFi_DWSInpwWs5n_uqAJbP"
+            imageRes = "https://lh3.googleusercontent.com/aida-public/AB6AXuDembsTXOEH5WaLBGGXH523jVAddzEbCq4h62XNxMR0wccFqD-_s1BtTqARD2gPGJPO4mcClK9wnWC8NOPOLFqPFx7FXwK0zVREpa-YIvwJBsYWar2OKxMKOdY-04fNhRqYwH5LJvv4rKdZ97itHouRjig6z2HXnUSzGnSyzmISvlGW8MoMbVhDxvLCIMf-DtBuhknryCcvkb7gmm8nfJ0C411ZLnV1gPcXza5FGeDlY7qhZ7MHqo1Kc1fFi_DWSInpwWs5n_uqAJbP",
+            onRedeem = { onRedeemReward("+2% APY Boost") }
         )
     }
 }
 
 @Composable
-fun RewardShopCard(type: String, title: String, desc: String, points: String, imageRes: String) {
+fun RewardShopCard(type: String, title: String, desc: String, points: String, imageRes: String, onRedeem: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = SurfaceContainer),
@@ -352,7 +360,7 @@ fun RewardShopCard(type: String, title: String, desc: String, points: String, im
                 Text(desc, style = MaterialTheme.typography.bodySmall.copy(color = OnSurfaceVariant, lineHeight = 20.sp))
                 Spacer(modifier = Modifier.height(20.dp))
                 Button(
-                    onClick = { },
+                    onClick = onRedeem,
                     colors = ButtonDefaults.buttonColors(containerColor = Primary),
                     shape = RoundedCornerShape(50),
                     contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)

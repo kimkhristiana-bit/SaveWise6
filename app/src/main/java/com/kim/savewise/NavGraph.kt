@@ -52,21 +52,43 @@ fun NavGraph(navController: NavHostController) {
             DashboardScreen(
                 onNavigateToSavings = { navController.navigate(Screen.SavingsHub.route) },
                 onNavigateToRewards = { navController.navigate(Screen.Rewards.route) },
-                onNavigateToProfile = { navController.navigate(Screen.Profile.route) }
+                onNavigateToProfile = { navController.navigate(Screen.Profile.route) },
+                onMenuClick = { /* Open Navigation Drawer */ },
+                onAddClick = { navController.navigate(Screen.SavingsHub.route) },
+                onActivityClick = { activityName -> 
+                    // Handle specific activity item click
+                },
+                onGoalClick = { goalName ->
+                    navController.navigate(Screen.SavingsHub.route)
+                },
+                onBalanceClick = {
+                    navController.navigate(Screen.SavingsHub.route)
+                },
+                onMomentumClick = {
+                    // Logic for momentum details
+                }
             )
         }
         composable(Screen.SavingsHub.route) {
             SavingsHubScreen(
                 onNavigateToDashboard = { navController.navigate(Screen.Dashboard.route) },
                 onNavigateToRewards = { navController.navigate(Screen.Rewards.route) },
-                onNavigateToProfile = { navController.navigate(Screen.Profile.route) }
+                onNavigateToProfile = { navController.navigate(Screen.Profile.route) },
+                onMenuClick = { /* Handle Menu */ },
+                onSearchClick = { /* Handle Search */ },
+                onAddClick = { /* Open Add Account Dialog */ }
             )
         }
         composable(Screen.Rewards.route) {
             RewardsScreen(
                 onNavigateToDashboard = { navController.navigate(Screen.Dashboard.route) },
                 onNavigateToSavings = { navController.navigate(Screen.SavingsHub.route) },
-                onNavigateToProfile = { navController.navigate(Screen.Profile.route) }
+                onNavigateToProfile = { navController.navigate(Screen.Profile.route) },
+                onMenuClick = { /* Handle Menu */ },
+                onViewHallOfFameClick = { /* Navigate to Hall of Fame */ },
+                onRedeemReward = { rewardName ->
+                    // Logic to redeem points
+                }
             )
         }
         composable(Screen.Profile.route) {

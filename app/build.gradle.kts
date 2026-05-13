@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.kim.savewise"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.kim.savewise"
@@ -58,4 +58,13 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // This is what provides Icons.AutoMirrored.Filled.ChevronRight
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material:material-icons-core")
+    implementation("androidx.compose.material:material-icons-extended")
+
+    
+
+
 }

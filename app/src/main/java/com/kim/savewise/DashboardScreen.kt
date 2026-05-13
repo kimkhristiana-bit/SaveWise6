@@ -31,7 +31,13 @@ import java.util.Locale
 fun DashboardScreen(
     onNavigateToSavings: () -> Unit = {},
     onNavigateToRewards: () -> Unit = {},
-    onNavigateToProfile: () -> Unit = {}
+    onNavigateToProfile: () -> Unit = {},
+    onMenuClick: () -> Unit = {},
+    onAddClick: () -> Unit = {},
+    onActivityClick: (String) -> Unit = {},
+    onGoalClick: (String) -> Unit = {},
+    onBalanceClick: () -> Unit = {},
+    onMomentumClick: () -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -47,7 +53,7 @@ fun DashboardScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = onMenuClick) {
                         Icon(Icons.Default.Menu, contentDescription = "Menu", tint = Primary)
                     }
                 },
@@ -56,7 +62,8 @@ fun DashboardScreen(
                         modifier = Modifier
                             .padding(end = 16.dp)
                             .size(40.dp)
-                            .border(1.dp, Primary.copy(alpha = 0.2f), CircleShape),
+                            .border(1.dp, Primary.copy(alpha = 0.2f), CircleShape)
+                            .clickable { onNavigateToProfile() },
                         shape = CircleShape
                     ) {
                         Box(Modifier.background(Color.LightGray))
@@ -105,7 +112,7 @@ fun DashboardScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { },
+                onClick = onAddClick,
                 containerColor = Primary,
                 contentColor = Color.White,
                 shape = CircleShape
@@ -124,20 +131,24 @@ fun DashboardScreen(
             contentPadding = PaddingValues(vertical = 16.dp)
         ) {
             item {
-                BalanceHero()
+                BalanceHero(onClick = onBalanceClick)
             }
             item {
-                MomentumAndGoals()
+                MomentumAndGoals(
+                    onViewAllClick = onNavigateToSavings,
+                    onGoalClick = onGoalClick,
+                    onMomentumClick = onMomentumClick
+                )
             }
             item {
-                RecentActivitySection()
+                RecentActivitySection(onActivityClick = onActivityClick)
             }
         }
     }
 }
 
 @Composable
-fun BalanceHero() {
+fun BalanceHero(onClick: () -> Unit = {}) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -147,6 +158,7 @@ fun BalanceHero() {
                     colors = listOf(Primary, PrimaryContainer)
                 )
             )
+            .clickable { onClick() }
             .padding(24.dp)
     ) {
         Column {
@@ -197,10 +209,10 @@ fun BalanceHero() {
 }
 
 @Composable
-fun MomentumAndGoals() {
+fun MomentumAndGoals(onViewAllClick: () -> Unit, onGoalClick: (String) -> Unit, onMomentumClick: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().clickable { onMomentumClick() },
             colors = CardDefaults.cardColors(containerColor = SurfaceContainerLow),
             border = BorderStroke(0.5.dp, OutlineVariant.copy(alpha = 0.3f)),
             shape = RoundedCornerShape(12.dp)
@@ -283,6 +295,7 @@ fun MomentumAndGoals() {
                     )
                     Text(
                         "VIEW ALL",
+                        modifier = Modifier.clickable { onViewAllClick() },
                         style = MaterialTheme.typography.labelSmall.copy(
                             fontWeight = FontWeight.Bold,
                             color = Primary,
@@ -291,19 +304,19 @@ fun MomentumAndGoals() {
                     )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
-                GoalItem("Tesla Model 3 Fund", 24500f, 45000f, Primary)
+                GoalItem("Tesla Model 3 Fund", 24500f, 45000f, Primary, onGoalClick)
                 Spacer(modifier = Modifier.height(24.dp))
-                GoalItem("Bali Dream Vacation", 8200f, 10000f, Primary)
+                GoalItem("Bali Dream Vacation", 8200f, 10000f, Primary, onGoalClick)
                 Spacer(modifier = Modifier.height(24.dp))
-                GoalItem("Emergency Buffer", 15000f, 15000f, PrimaryContainer)
+                GoalItem("Emergency Buffer", 15000f, 15000f, PrimaryContainer, onGoalClick)
             }
         }
     }
 }
 
 @Composable
-fun GoalItem(title: String, current: Float, target: Float, color: Color) {
-    Column {
+fun GoalItem(title: String, current: Float, target: Float, color: Color, onClick: (String) -> Unit) {
+    Column(modifier = Modifier.clickable { onClick(title) }) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -334,7 +347,7 @@ fun GoalItem(title: String, current: Float, target: Float, color: Color) {
 }
 
 @Composable
-fun RecentActivitySection() {
+fun RecentActivitySection(onActivityClick: (String) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = SurfaceContainerLow),
@@ -358,7 +371,8 @@ fun RecentActivitySection() {
                 title = "Stock Dividend",
                 subtitle = "AAPL • Today, 10:24 AM",
                 amount = "+$142.50",
-                amountColor = Primary
+                amountColor = Primary,
+                onClick = onActivityClick
             )
             HorizontalDivider(color = OutlineVariant.copy(alpha = 0.2f))
             ActivityItem(
@@ -366,7 +380,8 @@ fun RecentActivitySection() {
                 title = "Amazon Purchase",
                 subtitle = "Electronics • Yesterday, 8:12 PM",
                 amount = "-$89.99",
-                amountColor = OnSurface
+                amountColor = OnSurface,
+                onClick = onActivityClick
             )
             HorizontalDivider(color = OutlineVariant.copy(alpha = 0.2f))
             ActivityItem(
@@ -374,7 +389,8 @@ fun RecentActivitySection() {
                 title = "Monthly Salary",
                 subtitle = "Creative Hub Inc • 2 days ago",
                 amount = "+$5,800.00",
-                amountColor = Primary
+                amountColor = Primary,
+                onClick = onActivityClick
             )
         }
     }
@@ -386,12 +402,13 @@ fun ActivityItem(
     title: String,
     subtitle: String,
     amount: String,
-    amountColor: Color
+    amountColor: Color,
+    onClick: (String) -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable { onClick(title) }
             .padding(24.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
